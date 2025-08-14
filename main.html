@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Chatbot - Smart Financial Guidance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-profile {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .profile-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .profile-toggle {
+            display: flex;
+            margin-bottom: 20px;
+            background: #f8f9ff;
+            border-radius: 25px;
+            padding: 5px;
+        }
+
+        .profile-btn {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .profile-btn.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .profile-btn:not(.active) {
+            background: transparent;
+            color: #667eea;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot {
+            background: #f8f9ff;
+            color: #333;
+            border-bottom-left-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-btn {
+            padding: 15px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .budget-summary {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .budget-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .amount.positive {
+            color: #48bb78;
+        }
+
+        .amount.negative {
+            color: #f56565;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            padding: 8px 15px;
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .quick-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            color: #999;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Personal Finance Chatbot</h1>
+            <p>Intelligent Financial Guidance for Savings, Taxes & Investments in India</p>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="sendQuickMessage('Create my budget plan')">📊 Budget Plan</button>
+                    <button class="quick-btn" onclick="sendQuickMessage('Tax saving tips for India')">💸 Tax Tips</button>
+                    <button class="quick-btn" onclick="sendQuickMessage('Investment options in India')">📈 Investments</button>
+                    <button class="quick-btn" onclick="sendQuickMessage('Emergency fund planning')">🛡️ Emergency Fund</button>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot">
+                        <strong>FinanceBot:</strong> Namaste! 🙏 I'm your personal finance assistant. I can help you with budgeting, tax planning, investments, and savings strategies tailored for India. How can I assist you today?
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    <span>FinanceBot is typing</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Ask about budgeting, investments, taxes..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+
+            <div class="user-profile">
+                <div class="profile-section">
+                    <h3>👤 User Profile</h3>
+                    <div class="profile-toggle">
+                        <button class="profile-btn active" onclick="setUserType('student')">Student</button>
+                        <button class="profile-btn" onclick="setUserType('professional')">Professional</button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="monthlyIncome">Monthly Income (₹)</label>
+                        <input type="number" id="monthlyIncome" placeholder="25000" value="25000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" placeholder="25" value="25">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="city">City</label>
+                        <select id="city">
+                            <option value="mumbai">Mumbai</option>
+                            <option value="delhi">Delhi</option>
+                            <option value="bangalore">Bangalore</option>
+                            <option value="chennai">Chennai</option>
+                            <option value="kolkata">Kolkata</option>
+                            <option value="pune">Pune</option>
+                            <option value="hyderabad">Hyderabad</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="riskTolerance">Risk Tolerance</label>
+                        <select id="riskTolerance">
+                            <option value="low">Conservative</option>
+                            <option value="medium">Moderate</option>
+                            <option value="high">Aggressive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="budget-summary">
+                    <h3>📊 Budget Summary</h3>
+                    <div class="budget-item">
+                        <span>Monthly Income:</span>
+                        <span class="amount positive" id="displayIncome">₹25,000</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Suggested Savings (20%):</span>
+                        <span class="amount" id="suggestedSavings">₹5,000</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Emergency Fund Target:</span>
+                        <span class="amount" id="emergencyFund">₹1,50,000</span>
+                    </div>
+                    <div class="budget-item">
+                        <span>Tax Saving Limit (80C):</span>
+                        <span class="amount">₹1,50,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Personalized Guidance</h3>
+                <p>Get tailored financial advice based on your income, age, and goals specific to Indian financial landscape.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Smart Budgeting</h3>
+                <p>AI-generated budget summaries with Indian expense patterns and cost of living considerations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💡</div>
+                <h3>Spending Insights</h3>
+                <p>Actionable recommendations to optimize your expenses and maximize savings in the Indian context.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <h3>Demographic-Aware</h3>
+                <p>Communication style adapts for students vs professionals with appropriate complexity levels.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userType = 'student';
+        let chatHistory = [];
+
+        const financialKnowledge = {
+            budgeting: {
+                student: {
+                    tone: "friendly and encouraging",
+                    suggestions: [
+                        "Follow the 50-30-20 rule: 50% needs, 30% wants, 20% savings",
+                        "Track expenses using apps like Money Manager or Walnut",
+                        "Start with small savings, even ₹500/month makes a difference",
+                        "Avoid unnecessary subscriptions and eating out frequently",
+                        "Look for student discounts and cashback offers"
+                    ]
+                },
+                professional: {
+                    tone: "detailed and analytical",
+                    suggestions: [
+                        "Implement zero-based budgeting for better expense control",
+                        "Automate savings transfers to avoid spending temptation",
+                        "Maintain 3-6 months emergency fund in high-yield savings",
+                        "Review and optimize recurring expenses quarterly",
+                        "Use expense categorization for tax planning benefits"
+                    ]
+                }
+            },
+            investments: {
+                student: {
+                    options: ["SIP in Index Funds", "PPF", "ELSS", "Fixed Deposits", "Recurring Deposits"],
+                    advice: "Start with SIPs as low as ₹500/month in diversified equity funds"
+                },
+                professional: {
+                    options: ["Equity MFs", "Corporate Bonds", "REITs", "Gold ETFs", "International Funds"],
+                    advice: "Diversify across asset classes based on your risk profile and time horizon"
+                }
+            },
+            taxes: {
+                student: {
+                    tips: [
+                        "Claim HRA exemption if paying rent",
+                        "Invest in ELSS for tax saving under 80C",
+                        "Keep medical insurance for 80D benefits",
+                        "Maintain receipts for educational expenses"
+                    ]
+                },
+                professional: {
+                    tips: [
+                        "Maximize 80C deductions (₹1.5L limit)",
+                        "Claim 80D for health insurance premiums",
+                        "Consider NPS for additional 80CCD(1B) benefit",
+                        "Plan salary structure for optimal tax efficiency",
+                        "Use 80E for education loan interest deduction"
+                    ]
+                }
+            }
+        };
+
+        function setUserType(type) {
+            userType = type;
+            document.querySelectorAll('.profile-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update income placeholder based on user type
+            const incomeInput = document.getElementById('monthlyIncome');
+            if (type === 'student') {
+                incomeInput.placeholder = '15000';
+                incomeInput.value = '15000';
+            } else {
+                incomeInput.placeholder = '50000';
+                incomeInput.value = '50000';
+            }
+            updateBudgetSummary();
+        }
+
+        function updateBudgetSummary() {
+            const income = parseInt(document.getElementById('monthlyIncome').value) || 0;
+            const savings = Math.round(income * 0.2);
+            const emergency = income * 6;
+            
+            document.getElementById('displayIncome').textContent = `₹${income.toLocaleString('en-IN')}`;
+            document.getElementById('suggestedSavings').textContent = `₹${savings.toLocaleString('en-IN')}`;
+            document.getElementById('emergencyFund').textContent = `₹${emergency.toLocaleString('en-IN')}`;
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('chatInput').value = message;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'flex';
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate AI response delay
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = generateResponse(message);
+                addMessage(response, 'bot');
+            }, 1500 + Math.random() * 1000);
+        }
+
+        function addMessage(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+            } else {
+                messageDiv.innerHTML = `<strong>FinanceBot:</strong> ${message}`;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Store in chat history
+            chatHistory.push({sender, message, timestamp: new Date()});
+        }
+
+        function generateResponse(userMessage) {
+            const income = parseInt(document.getElementById('monthlyIncome').value) || 0;
+            const age = parseInt(document.getElementById('age').value) || 25;
+            const city = document.getElementById('city').value;
+            const riskTolerance = document.getElementById('riskTolerance').value;
+            
+            const lowerMessage = userMessage.toLowerCase();
+            
+            // Handle greetings
+            if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey') || lowerMessage.includes('namaste')) {
+                return "Hello! How can I help you?";
+            }
+            
+            // Budget-related queries
+            if (lowerMessage.includes('budget') || lowerMessage.includes('plan')) {
+                const savings = Math.round(income * 0.2);
+                const needs = Math.round(income * 0.5);
+                const wants = Math.round(income * 0.3);
+                
+                if (userType === 'student') {
+                    return `Great question! 😊 As a student, here's a simple budget plan for your ₹${income.toLocaleString('en-IN')} monthly income:
+                    
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">📊 50-30-20 Budget Rule:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                            <tr style="background: #f8f9ff;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Category</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Amount</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Includes</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Needs (50%)</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">₹${needs.toLocaleString('en-IN')}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Rent, food, transportation, books</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Wants (30%)</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">₹${wants.toLocaleString('en-IN')}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Entertainment, eating out, shopping</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Savings (20%)</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">₹${savings.toLocaleString('en-IN')}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Emergency fund + future goals</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">💡 Student-friendly tips:</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Use apps like Walnut or Money Manager to track expenses</li>
+                            <li>Look for student discounts everywhere!</li>
+                            <li>Cook at home to save on food costs</li>
+                            <li>Start investing with SIPs as low as ₹500/month</li>
+                        </ul>
+                    </div>
+
+                    Remember, building good financial habits now will pay off hugely later! 🚀`;
+                } else {
+                    return `Based on your ₹${income.toLocaleString('en-IN')} monthly income, here's a comprehensive budget strategy:
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">📊 Professional Budget Allocation:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                            <tr style="background: #f8f9ff;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Category</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Amount</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Details</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Fixed Expenses</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">₹${needs.toLocaleString('en-IN')}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Rent, utilities, insurance, EMIs</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Variable Expenses</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">₹${wants.toLocaleString('en-IN')}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Food, transport, entertainment</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Savings & Investments</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">₹${savings.toLocaleString('en-IN')}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">20% minimum</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">💼 Professional Strategies:</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Automate savings transfers on salary day</li>
+                            <li>Maximize tax-saving investments under 80C</li>
+                            <li>Maintain 6-month emergency fund</li>
+                            <li>Consider salary restructuring for tax optimization</li>
+                            <li>Review and rebalance investments quarterly</li>
+                        </ul>
+                    </div>
+
+                    In ${city}, consider the local cost of living for housing and transportation adjustments.`;
+                }
+            }
+            
+            // Tax-related queries
+            if (lowerMessage.includes('tax') || lowerMessage.includes('80c') || lowerMessage.includes('save tax')) {
+                if (userType === 'student') {
+                    return `Tax planning for students! 📚💰
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Key Tax-Saving Options for Students:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                            <tr style="background: #f8f9ff;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Investment Option</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Details</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Benefits</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">ELSS Mutual Funds</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Start SIP for ₹12,500/month (₹1.5L yearly limit)</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">3-year lock-in, tax deduction + returns</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">PPF</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₹500-₹1.5L annually</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">15-year lock-in, tax-free returns</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Life Insurance</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Term insurance premiums</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Protection + tax deduction under 80C</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Education Loan</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Interest payments</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Deduction under 80E (no limit)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Student-Specific Tips:</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>If you have internship income, file ITR even if no tax due</li>
+                            <li>Keep education-related receipts</li>
+                            <li>Parents can claim your education expenses</li>
+                            <li>Start tax-saving habits early!</li>
+                        </ul>
+                    </div>
+
+                    Remember: Tax planning is wealth planning! 🎯`;
+                } else {
+                    return `Comprehensive tax planning for professionals! 💼
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Tax Deduction Sections:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                            <tr style="background: #f8f9ff;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Section</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Limit</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Investment Options</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">80C</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">₹1,50,000</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">ELSS, PPF, EPF, Life Insurance, Home Loan Principal, NSC</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">80D</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">₹25K-₹50K</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Health insurance (based on age)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">80CCD(1B)</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">₹50,000</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">NPS additional investment</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">80E</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">No Limit</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Education loan interest</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">24B</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">₹2,00,000</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Home loan interest</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Salary Structure Optimization:</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Food allowance: ₹2,400/month tax-free</li>
+                            <li>Mobile/Internet reimbursement</li>
+                            <li>LTA utilization</li>
+                            <li>Medical insurance by employer</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <strong>Pro Tip:</strong> Plan investments by December to avoid last-minute rush! With your income of ₹${income.toLocaleString('en-IN')}, you can save approximately ₹46,000-₹62,000 annually in taxes! 🚀
+                    </div>`;
+                }
+            }
+            
+            // Investment-related queries
+            if (lowerMessage.includes('invest') || lowerMessage.includes('mutual fund') || lowerMessage.includes('sip')) {
+                const investmentAmount = Math.round(income * 0.15);
+                
+                if (userType === 'student') {
+                    return `Smart investing for students! 📈💡
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Beginner-Friendly Investment Options:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                            <tr style="background: #f8f9ff;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Investment Type</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Minimum Amount</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Best For</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">SIP in Index Funds</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₹500-₹1000/month</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Long-term wealth building</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">ELSS</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₹1000-₹2000/month</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Tax saving + growth</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">PPF</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₹500/month (₹6000/year min)</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Long-term savings (15 years)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Recurring Deposits</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₹500/month</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Short-term goals (safe option)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Student Investment Strategy:</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Start small but start NOW! Time is your biggest asset</li>
+                            <li>Focus on equity mutual funds through SIP</li>
+                            <li>Avoid direct stocks until you learn more</li>
+                            <li>Don't chase quick returns, be consistent</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Recommended allocation for ₹${investmentAmount.toLocaleString('en-IN')}/month:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                            <tr style="background: #f8f9ff;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Asset Class</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Allocation</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Investment Type</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Equity</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">60%</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Large cap index funds</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">ELSS</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">30%</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Tax saving equity funds</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Debt/FD</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">10%</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Emergency buffer</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <strong>Amazing Fact:</strong> Every ₹1000 invested at 22 becomes ₹75,000 by retirement! 🎯
+                    </div>`;
+                } else {
+                    const allocations = {
+                        high: { equity: '70%', debt: '20%', alternative: '10%', equityDetails: 'Mix of large, mid, small cap', debtDetails: 'Corporate bonds, FDs', altDetails: 'Gold, REITs' },
+                        medium: { equity: '60%', debt: '30%', alternative: '10%', equityDetails: 'Large cap focused', debtDetails: 'Government bonds, FDs', altDetails: 'Gold/Commodities' },
+                        low: { equity: '40%', debt: '50%', alternative: '10%', equityDetails: 'Blue-chip funds', debtDetails: 'FDs, PPF, EPF', altDetails: 'Liquid funds' }
+                    };
+                    const allocation = allocations[riskTolerance];
+                    
+                    return `Strategic investment portfolio for professionals! 💼📈
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Your Investment Profile:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                            <tr style="background: #f8f9ff;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Parameter</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Value</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Monthly Income</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₹${income.toLocaleString('en-IN')}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Risk Tolerance</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${riskTolerance.charAt(0).toUpperCase() + riskTolerance.slice(1)}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Investment Capacity</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₹${investmentAmount.toLocaleString('en-IN')}/month</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Recommended Asset Allocation:</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                            <tr style="background: #f8f9ff;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Asset Class</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Allocation</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Investment Options</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Equity</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">${allocation.equity}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${allocation.equityDetails}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Debt</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">${allocation.debt}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${allocation.debtDetails}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Alternative</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">${allocation.alternative}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${allocation.altDetails}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">Investment Vehicles:</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Direct mutual funds for lower expense ratios</li>
+                            <li>NPS for retirement + tax benefits</li>
+                            <li>International funds for diversification</li>
+                            <li>Corporate bonds for stable returns</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <strong>Pro Strategy:</strong> Use systematic transfer plans (STP) to optimize entry points! 🚀
+                    </div>`;
+                }
+            }
+            
+            // Emergency fund queries
+            if (lowerMessage.includes('emergency') || lowerMessage.includes('fund')) {
+                const emergencyAmount = income * 6;
+                return `Emergency Fund Planning! 🛡️💰
+
+                <div style="margin: 15px 0;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">Why You Need an Emergency Fund:</h4>
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        Medical emergencies, job loss, or unexpected expenses can derail your financial goals without proper preparation.
+                    </div>
+                </div>
+
+                <div style="margin: 15px 0;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">Emergency Fund Strategy:</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                        <tr style="background: #f8f9ff;">
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Component</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Details</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Purpose</th>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Target Amount</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold; color: #48bb78;">₹${emergencyAmount.toLocaleString('en-IN')}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">6 months of expenses</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Monthly Savings</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">₹${Math.round(emergencyAmount/12).toLocaleString('en-IN')}/month</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Systematic building approach</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Timeline</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">12 months</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Complete fund building</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="margin: 15px 0;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">Where to Keep Emergency Funds:</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                        <tr style="background: #f8f9ff;">
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Option</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Allocation</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Access Time</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Returns</th>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Savings Bank</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">50%</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Instant access</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">3-4% p.a.</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Liquid Funds</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">30%</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">1-day redemption</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">4-6% p.a.</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Short-term FDs</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">20%</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Premature withdrawal</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">6-7% p.a.</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="margin: 15px 0;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">Building Strategy:</h4>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>Start with ₹${Math.round(emergencyAmount/12).toLocaleString('en-IN')}/month systematic savings</li>
+                        <li>Use windfalls (bonus, gifts) to accelerate</li>
+                        <li>Automate transfers to separate account</li>
+                        <li>Don't invest emergency funds in equity!</li>
+                    </ul>
+                </div>
+
+                ${userType === 'student' ? 
+                    '<div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;"><strong>Student Tip:</strong> Even ₹50,000 emergency fund can handle most situations!</div>' :
+                    '<div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;"><strong>Professional Tip:</strong> Prioritize building this before aggressive investments!</div>'
+                }
+
+                <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <strong>Remember:</strong> Emergency funds are insurance, not investments! 🎯
+                </div>`;
+            }
+            
+            // General financial advice
+            const generalAdvice = [
+                `Great question! ${userType === 'student' ? 'As a student' : 'As a professional'}, financial planning is crucial for your future. Let me help you with specific guidance based on your profile.`,
+                `Based on your monthly income of ₹${income.toLocaleString('en-IN')} and location in ${city}, here's what I recommend for your financial journey.`,
+                `That's an important financial topic! Given your ${riskTolerance} risk tolerance and current situation, let me provide personalized advice.`
+            ];
+            
+            return generalAdvice[Math.floor(Math.random() * generalAdvice.length)] + 
+                   "\n\nCould you be more specific about what aspect of personal finance you'd like to explore? I can help with budgeting, investments, tax planning, or savings strategies! 😊";
+        }
+
+        // Initialize budget summary
+        document.getElementById('monthlyIncome').addEventListener('input', updateBudgetSummary);
+        updateBudgetSummary();
+
+        // Welcome message enhancement
+        setTimeout(() => {
+            addMessage(`I notice you're set up as a ${userType} with a monthly income of ₹${document.getElementById('monthlyIncome').value}. I can provide advice tailored specifically for your situation! What would you like to explore first? 🤔`, 'bot');
+        }, 2000);
+    </script>
+</body>
+</html>
